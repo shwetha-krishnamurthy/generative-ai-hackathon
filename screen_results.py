@@ -1,17 +1,19 @@
 import streamlit as st
 
-# NOTE: run using `streamlit run screen_results.py`
-
 ###############################################################################
 # Helper Functions
 ###############################################################################
 
+# Changes session state back to input page
 def backpage(): st.session_state.page = 0
 
+# If the Gen AI results have not been calculated yet for a given problem-solution
+# pair, then calculate the results.
 def update_responses(data, unique_query_name):
     return data 
     # TODO: this needs to be written (find the history row in data, see if it has gen AI answers yet, and if it does not, then create them)
 
+# Prints HTML code for the results screen 
 def update_screen(screen, results):
     html_code = """
     <!DOCTYPE html>
@@ -76,7 +78,6 @@ def update_screen(screen, results):
 
     screen.markdown(html_code, unsafe_allow_html=True)
     # TODO: still need to get the more information/chat/decision buttons working
-    # TODO: consider adding an "export" buttom
             # <div class="container">
             #     <div class="box">
             #         <center>
@@ -94,6 +95,8 @@ def update_screen(screen, results):
 # Print Screen with Results
 ###############################################################################
 
+# Prints the results on the screen for the provided data. Allows the users to 
+# return to the input page to input different data.
 def show_results_screen(data):
     # Side Bar (only appears if run with multiple queries)
     unique_query_name = list(data.keys())[0]
@@ -103,7 +106,7 @@ def show_results_screen(data):
 
     # Main Screen
     main_content.title("VC Evaluator (by sustAInable): " + unique_query_name)
-    # TODO: add a loading screen
+    update_screen(main_content, data[unique_query_name])
     data = update_responses(data, unique_query_name) # TODO: not certain if need data = at beginning, depends if dictionaries have deep copy
     update_screen(main_content, data[unique_query_name])
 
@@ -113,6 +116,7 @@ def show_results_screen(data):
 
     # Other action buttons
     st.button('Upload Different CSV or Problem-Solution Pair', on_click = backpage) # TODO: make sure that 
+    # TODO: consider adding an "export" buttom
 
 ###############################################################################
 # Example Instance

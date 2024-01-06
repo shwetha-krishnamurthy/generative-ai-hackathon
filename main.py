@@ -2,6 +2,8 @@ import streamlit as st
 from screen_input import show_input_screen
 from screen_results import show_results_screen 
 
+# NOTE: run using `streamlit run main.py`
+
 # Configure multi-page streamlit
 st.set_page_config(layout = "wide")
 if "page" not in st.session_state:
