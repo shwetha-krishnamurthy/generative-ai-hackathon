@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+from io import StringIO
+
 
 ###############################################################################
 # Helper Function
@@ -42,11 +44,10 @@ def show_input_screen():
     if submitted:
         if content_source == "CSV upload" and uploaded_file is not None:
             try:
-                # Try reading with default UTF-8 encoding
-                st.session_state.dataframe = pd.read_csv(uploaded_file)
-                st.write("CSV file successfully loaded.")
-            except UnicodeDecodeError:
-                st.session_state.dataframe = pd.read_csv(uploaded_file, encoding='ISO-8859-1')
+                stringio = StringIO(uploaded_file.getvalue().decode("utf-8", errors="replace"))
+                string_data = stringio.read()
+                st.session_state.dataframe = pd.read_csv(StringIO(string_data))
+                st.write(st.session_state.dataframe.head())
                 st.write("CSV file successfully loaded.")
             except Exception as e:
                 st.write("An error occurred while reading the CSV file.")
@@ -59,4 +60,4 @@ def show_input_screen():
             })
 
 if __name__ == "__main__":
-    input_screen()
+    show_input_screen()
