@@ -6,6 +6,8 @@ import streamlit as st
 # Helper Functions
 ###############################################################################
 
+def backpage(): st.session_state.page = 0
+
 def update_responses(data, unique_query_name):
     return data 
     # TODO: this needs to be written (find the history row in data, see if it has gen AI answers yet, and if it does not, then create them)
@@ -93,9 +95,6 @@ def update_screen(screen, results):
 ###############################################################################
 
 def show_results_screen(data):
-    # Title
-    st.set_page_config(layout = "wide")
-
     # Side Bar (only appears if run with multiple queries)
     unique_query_name = list(data.keys())[0]
     if (len(data.keys()) > 1):
@@ -111,6 +110,9 @@ def show_results_screen(data):
     # Disclaimer (TODO: should customize disclaimer)
     main_content.markdown("*Disclaimer: Generative AI can make mistakes. Consider checking important information.*")
     main_content.markdown("*Created by Team sustAInable (Shwetha Krishnamurthy, Jacob Ryan, and Mason Yu) for the 2024 D^3 EarthAI Hackathon.*")
+
+    # Other action buttons
+    st.button('Upload Different CSV or Problem-Solution Pair', on_click = backpage) # TODO: make sure that 
 
 ###############################################################################
 # Example Instance

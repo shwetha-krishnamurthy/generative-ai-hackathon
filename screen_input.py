@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
 
+def nextpage(): st.session_state.page = 1
 
-
-def input_screen():
-    st.title("sustAInable AI Evaluator Input")
+def show_input_screen():
+    st.title("Input to VC Evaluator (by sustAInable)")
     st.write("Upload your CSV file of your problem-solution pairs. Alternatively, analyze one idea")
     
     content_source = st.radio("Choose input method:", ["CSV upload", "Manual entry"])
@@ -17,13 +17,15 @@ def input_screen():
             problem_statement = st.text_input("Enter the Problem")
             solution_statement = st.text_input("Enter the Solution")
 
-        st.session_state.api_key = st.text_input("Enter OpenAI API Key:", type='password')
-        submitted = st.form_submit_button('Submit')
+        if "api_key" not in st.session_state:
+            st.session_state.api_key = st.text_input("Enter OpenAI API Key:", type='password')
+            
+        submitted = st.form_submit_button('Submit', on_click = nextpage)
         
     if submitted:
         if content_source == "CSV upload" and uploaded_file is not None:
             try:
-    # Try reading with default UTF-8 encoding
+                # Try reading with default UTF-8 encoding
                 st.session_state.dataframe = pd.read_csv(uploaded_file)
                 st.write("CSV file successfully loaded.")
             except UnicodeDecodeError:
@@ -39,6 +41,5 @@ def input_screen():
                 'Solution': [solution_statement]
             })
 
-        st.session_state.submitted = True
-
-input_screen()
+if __name__ == "__main__":
+    input_screen()
