@@ -34,8 +34,7 @@ def show_input_screen():
             solution_statement = st.text_input("Enter the Solution")
 
         # API Key
-        if "api_key" not in st.session_state:
-            st.session_state.api_key = st.text_input("Enter OpenAI API Key:", type='password')
+        st.session_state.api_key = st.text_input("Enter OpenAI API Key:", type='password')
 
         # Submission button
         submitted = st.form_submit_button('Submit', on_click = nextpage)

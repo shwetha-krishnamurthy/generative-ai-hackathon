@@ -106,7 +106,6 @@ def show_results_screen(data):
 
     # Main Screen
     main_content.title("VC Evaluator (by sustAInable): " + unique_query_name)
-    update_screen(main_content, data[unique_query_name])
     data = update_responses(data, unique_query_name) # TODO: not certain if need data = at beginning, depends if dictionaries have deep copy
     update_screen(main_content, data[unique_query_name])
 
