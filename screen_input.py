@@ -40,5 +40,3 @@ def input_screen():
             })
 
         st.session_state.submitted = True
-
-input_screen()
