@@ -23,8 +23,11 @@ def input_screen():
     if submitted:
         if content_source == "CSV upload" and uploaded_file is not None:
             try:
-                    # Read the CSV file into a DataFrame
+    # Try reading with default UTF-8 encoding
                 st.session_state.dataframe = pd.read_csv(uploaded_file)
+                st.write("CSV file successfully loaded.")
+            except UnicodeDecodeError:
+                st.session_state.dataframe = pd.read_csv(uploaded_file, encoding='ISO-8859-1')
                 st.write("CSV file successfully loaded.")
             except Exception as e:
                 st.write("An error occurred while reading the CSV file.")
