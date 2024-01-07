@@ -224,7 +224,7 @@ def show_results_screen():
     main_content = st
 
     # Title
-    main_content.title("SustainAIble VC Synergy")
+    main_content.title("SustAInable VC Synergy")
     with st.spinner('Loading ...'):
         update_responses(unique_query_name)
 
