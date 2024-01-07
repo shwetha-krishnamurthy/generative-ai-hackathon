@@ -1,8 +1,5 @@
-import os
 import json
 import time
-from openai import OpenAI
-from tavily import TavilyClient
 
 # Function to perform a Tavily search
 def tavily_search(query, tavily_client):
@@ -30,8 +27,8 @@ def submit_tool_outputs(thread_id, run_id, tools_to_call, client, tavily_client)
         if function_name == "tavily_search":
             output = tavily_search(query=json.loads(function_args)["query"], tavily_client=tavily_client)
 
-        if output:
-            tool_output_array.append({"tool_call_id": tool_call_id, "output": output})
+        # if output: #Uncomment the condition if it throws an invalid request type error.
+        tool_output_array.append({"tool_call_id": tool_call_id, "output": output})
 
     return client.beta.threads.runs.submit_tool_outputs(
         thread_id=thread_id,
@@ -43,19 +40,22 @@ def submit_tool_outputs(thread_id, run_id, tools_to_call, client, tavily_client)
 def get_messages_from_thread(thread_id, client):
     messages = client.beta.threads.messages.list(thread_id=thread_id)
 
-    prompt_answer_dict_list = []
+    prompt_answer_dict_list =[]
+    user_answer_tuple_list = []
+
     for msg in messages:
-        # print(f"{msg.role}: {msg.content[0].text.value}")
-        prompt_answer_dict = {}
-
-        if msg.role == "assistant":
-            prompt_answer_dict["answer"] = msg.content[0].text.value
+        print(f"{msg.role}: {msg.content[0].text.value}")
+        user_answer_tuple_list.append((msg.role, msg.content[0].text.value))
         
-        else:
-            prompt_answer_dict["prompt"] = msg.content[0].text.value
+    for idx, pair in enumerate(user_answer_tuple_list):
+        if idx % 2 == 0:
+            prompt_answer_dict = {}
+            next = user_answer_tuple_list[idx + 1]
+            prompt_answer_dict[pair[0]] = pair[1]
+            prompt_answer_dict[next[0]] = next[1]
 
-        prompt_answer_dict_list.append(prompt_answer_dict)
-    
+            prompt_answer_dict_list.append(prompt_answer_dict)
+
     return prompt_answer_dict_list
 
 def get_eval_answers(prompt_list, assistant, client, tavily_client):
@@ -66,6 +66,7 @@ def get_eval_answers(prompt_list, assistant, client, tavily_client):
     # Create a thread
     thread = client.beta.threads.create()
     print(f"Thread: {thread}")
+
 
     # Ongoing conversation loop
     for user_input in prompt_list:
@@ -95,7 +96,7 @@ def get_eval_answers(prompt_list, assistant, client, tavily_client):
             run = submit_tool_outputs(thread.id, run.id, run.required_action.submit_tool_outputs.tool_calls, client=client, tavily_client=tavily_client)
             run = wait_for_run_completion(thread.id, run.id, client=client)
 
-        # Print messages from the thread
-        get_messages_from_thread(thread.id, client)
-
-        return thread.id
+    # Print messages from the thread
+    prompt_answer_dict_list = get_messages_from_thread(thread.id, client)
+    
+    return prompt_answer_dict_list

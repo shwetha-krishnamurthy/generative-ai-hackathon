@@ -13,6 +13,7 @@ def create_problem_evaluation_assistant(problem_file_path):
 
     assistant_prompt_instruction = """You a VC analyst specializing in sustainability investing.
     You need to evaluate the problem given in the file.
+    You need to search the web whenever the document doesn't have enough information.
     """
     file = client.files.create(
         file=open(
@@ -58,8 +59,6 @@ def get_problem_prompt_answers(problem_file_path):
     "Has this problem been solved elsewhere?"
     ]
 
-    thread_id = utils.get_eval_answers(prompt_list, assistant, client, tavily_client)
-
-    prompt_answer_dict_list = utils.get_messages_from_thread(thread_id, client)
+    prompt_answer_dict_list = utils.get_eval_answers(prompt_list, assistant, client, tavily_client)
 
     return prompt_answer_dict_list
