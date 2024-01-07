@@ -3,8 +3,6 @@ import utils
 from openai import OpenAI
 from tavily import TavilyClient
 
-os.environ['OPENAI_API_KEY'] = "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"
-os.environ["TAVILY_API_KEY"] = "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"
 
 def create_summarization_assistant():
     # Initialize clients with API keys

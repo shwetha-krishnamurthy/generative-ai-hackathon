@@ -9,9 +9,9 @@ def get_problem_solution_eval_result(problem_file_path, solution_file_path):
 
     summary = summarization.get_summarization(problem_prompt_answers + solution_prompt_answers)
 
-    print(problem_prompt_answers)
-    print(solution_prompt_answers)
-    print(summary)
+    # print(problem_prompt_answers)
+    # print(solution_prompt_answers)
+    # print(summary)
 
     return problem_prompt_answers, solution_prompt_answers, summary
 

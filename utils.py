@@ -44,7 +44,7 @@ def get_messages_from_thread(thread_id, client):
     user_answer_tuple_list = []
 
     for msg in messages:
-        print(f"{msg.role}: {msg.content[0].text.value}")
+        # print(f"{msg.role}: {msg.content[0].text.value}")
         user_answer_tuple_list.append((msg.role, msg.content[0].text.value))
         
     for idx, pair in enumerate(user_answer_tuple_list):
