@@ -10,7 +10,10 @@ def create_summarization_assistant():
     tavily_client = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
 
     assistant_prompt_instruction = """Given a list of questions and answers, you need to summarize
-    the text in 50 words.
+    only the answers parts.
+    You are a VC analyst who specializes in sustainability investing.
+    Based on the answers, you need to make a good suggestion on whether you will recommend to invest in
+    this idea. 
     """
 
     # Create an assistant
