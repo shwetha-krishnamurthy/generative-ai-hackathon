@@ -38,7 +38,7 @@ def create_solution_evaluation_assistant(solution_file_path):
     # Create an assistant
     assistant = client.beta.assistants.create(
         instructions=assistant_prompt_instruction,
-        model="gpt-4-1106-preview",
+        model="gpt-4",
         tools=[{"type": "retrieval"},
                {"type": "code_interpreter"},
             {

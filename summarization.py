@@ -18,7 +18,7 @@ def create_summarization_assistant():
     # Create an assistant
     assistant = client.beta.assistants.create(
         instructions=assistant_prompt_instruction,
-        model="gpt-4-1106-preview",
+        model="gpt-4",
     )
 
     return assistant, client, tavily_client
