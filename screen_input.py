@@ -34,10 +34,11 @@ def show_input_screen():
             solution_statement = st.text_input("Enter the Solution")
 
         # API Key
+        # if "api_key" not in st.session_state:
         st.session_state.api_key = st.text_input("Enter OpenAI API Key:", type='password')
 
         # Submission button
-        submitted = st.form_submit_button('Submit', on_click = nextpage)
+        submitted = st.form_submit_button('Submit')
         
     # Store inputs
     if submitted:
@@ -47,16 +48,19 @@ def show_input_screen():
                 string_data = stringio.read()
                 st.session_state.dataframe = pd.read_csv(StringIO(string_data))
                 st.write(st.session_state.dataframe.head())
-                st.write("CSV file successfully loaded.")
+                st.success("CSV file successfully loaded.")
             except Exception as e:
                 st.write("An error occurred while reading the CSV file.")
-                st.write(e)
+                st.error(e)
 
         elif content_source == "Manual entry":
             st.session_state.dataframe = pd.DataFrame({
                 'Problem': [problem_statement],
                 'Solution': [solution_statement]
             })
+        
+        # Move to next page
+        st.button('Process Results', on_click = nextpage)    
 
 if __name__ == "__main__":
     show_input_screen()
