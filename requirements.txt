@@ -4,3 +4,6 @@ pandas
 tavily-python
 io
 os
+nltk
+scikit-learn
+json
