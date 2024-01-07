@@ -1,6 +1,6 @@
 openai
 streamlit
 pandas
-tavily
+tavily-python
 io
 os
