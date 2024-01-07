@@ -18,7 +18,7 @@ def nextpage(): st.session_state.page = 1
 # key unless one was previously provided.
 def show_input_screen():
     # Title
-    st.title("VC Evaluator (by sustAInable)")
+    st.title("SustainAIble VC Synergy")
     st.write("Upload your CSV file of your problem-solution pairs. Alternatively, analyze one idea")
     
     content_source = st.radio("Choose input method:", ["CSV upload", "Manual entry"])
@@ -34,8 +34,8 @@ def show_input_screen():
             solution_statement = st.text_input("Enter the Solution")
 
         # API Key
-        # if "api_key" not in st.session_state:
         st.session_state.api_key = st.text_input("Enter OpenAI API Key:", type='password')
+        st.session_state.tavily_key = st.text_input("Enter Tavily API Key (if you would like to use the new Open AI Assistants; please note that this new technology is experimental and may require more tokens):", type='password')
 
         # Submission button
         submitted = st.form_submit_button('Submit')
