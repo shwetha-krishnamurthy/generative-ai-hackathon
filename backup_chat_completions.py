@@ -1,8 +1,8 @@
-import os
+# import os
 import json
 from query import run_open_ai
 
-os.environ['OPENAI_API_KEY'] = "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"
+# os.environ['OPENAI_API_KEY'] = "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"
 
 
 problem_questions = ["Question 1: Does the problem being addressed has any impact on the climate?",
