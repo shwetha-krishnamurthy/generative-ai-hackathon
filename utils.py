@@ -11,7 +11,7 @@ def wait_for_run_completion(thread_id, run_id, client):
     while True:
         time.sleep(1)
         run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
-        print(f"Current run status: {run.status}")
+        # print(f"Current run status: {run.status}")
         if run.status in ['completed', 'failed', 'requires_action']:
             return run
 
@@ -61,11 +61,11 @@ def get_messages_from_thread(thread_id, client):
 def get_eval_answers(prompt_list, assistant, client, tavily_client):
 
     assistant_id = assistant.id
-    print(f"Assistant ID: {assistant_id}")
+    # print(f"Assistant ID: {assistant_id}")
 
     # Create a thread
     thread = client.beta.threads.create()
-    print(f"Thread: {thread}")
+    # print(f"Thread: {thread}")
 
 
     # Ongoing conversation loop
@@ -83,13 +83,13 @@ def get_eval_answers(prompt_list, assistant, client, tavily_client):
             thread_id=thread.id,
             assistant_id=assistant_id,
         )
-        print(f"Run ID: {run.id}")
+        # print(f"Run ID: {run.id}")
 
         # Wait for run to complete
         run = wait_for_run_completion(thread.id, run.id, client=client)
 
         if run.status == 'failed':
-            print(run)
+            # print(run)
             continue
 
         elif run.status == 'requires_action':
