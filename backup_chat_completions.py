@@ -1,10 +1,8 @@
-# import os
+
 import json
 from query import run_open_ai
 
-# os.environ['OPENAI_API_KEY'] = "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"
-
-
+# VC Problem evaluation questions & Solutions
 problem_questions = ["Question 1: Does the problem being addressed has any impact on the climate?",
               "Question 2: What is the scale of the problem? (people, volume, money, etc)",
               "Question 3: Who faces this problem predominantly?",
@@ -18,15 +16,14 @@ solution_questions = ["Question 1: Does the solution address the problem directl
               "Question 5: What are the potential challenges in implementing this solution?",
               "Question 6: What additional data does this solution need to help your evaluation further?"]
 
-# TODO be able to read the md file. otherwise, hardcode the VC knowledge into prompt
-# with open("generative-ai-hackathon/CircularEconomyResearch.md", "r", encoding="utf-8") as file:
-#     circular_economy_knowledge = file.read()
+# Knowledge about the circular economy and its criteria
+circular_economy_knowledge = "Deep Dive into Circular Economy\nIntroduction\nThe circular economy represents a systemic shift from traditional linear economic models (make, use, dispose) to an eco-friendly approach that emphasizes the reuse, repair, refurbishment, and recycling of materials and products. This transformation is crucial in addressing environmental challenges, such as resource depletion and climate change.\n\nPrinciples of Circular Economy\n1. Design Out Waste and Pollution\nFocus on designing products that minimize waste and pollution from the outset.\nImplement sustainable manufacturing processes.\n2. Keep Products and Materials in Use\nPromote the reuse, repair, and refurbishment of products.\nEmphasize durability and modularity in product design.\n3. Regenerate Natural Systems\nEncourage the use of renewable resources.\nImplement practices that restore and revitalize natural ecosystems.\nChallenges in Circular Economy\n1. Economic and Market Challenges\nThe transition to a circular economy requires changes in market structures and business models.\nConvincing stakeholders and consumers to adopt circular practices can be difficult.\n2. Technological and Infrastructural Barriers\nDeveloping and adopting technologies for recycling and refurbishing is costly and complex.\nThere is a need for infrastructure to support circular economy practices, like widespread collection and recycling systems.\n3. Regulatory and Policy Frameworks\nThe lack of supportive regulatory frameworks can hinder the growth of circular economy initiatives.\nPolicies need to incentivize sustainable practices and penalize linear, wasteful approaches.\nImpactful Solutions in Circular Economy\n1. Sustainable Product Design\nDesign products that are easy to disassemble for repair or recycling.\nUse environmentally friendly materials.\n2. Business Model Innovation\nAdopt models like product-as-a-service, where businesses retain ownership of products and customers pay for the service.\nImplement sharing platforms to maximize the use of products.\n3. Industrial Symbiosis\nEncourage different industries to work together, where waste from one industry becomes the input for another.\nFoster collaborations that lead to innovative uses of waste materials.\n4. Consumer Engagement and Education\nEducate consumers about the benefits of circular economy products and practices.\nEngage consumers in sustainability through incentives and awareness campaigns.\n5. Technology and Innovation\nInvest in technology that facilitates recycling and the efficient use of resources.\nInnovate in areas like biodegradable materials and renewable energy sources.\nConclusion\nThe circular economy presents a transformative approach to sustainability, focusing on a regenerative and restorative model. While there are challenges, the potential for innovation and environmental impact is substantial. Embracing circular economy principles can lead to a more sustainable and economically viable future."
+
 
 
 def problem_eval(problem_text):
     model = "gpt-4"
-    # TODO add the circular economy knowledge to system prompt correctly on Streamlit
-    system = "You are an unbiased expert on Circular Economy, helping a VC analyst sift through ideas with a discerning eye. Adopt a skeptical mindset when analyzing the idea. Here's your knowledge: \n\n" # + circular_economy_knowledge
+    system = "You are an unbiased expert on Circular Economy, helping a VC analyst sift through ideas with a discerning eye. Adopt a skeptical mindset when analyzing the idea. Here's your knowledge: \n\n" + circular_economy_knowledge
     user = f"""Here are a list of questions you must answer about the below problem statement. Please answer each in 3 sentences in JSON format with the question label as the key, with the evaluation as the value.
               Questions:
               {problem_questions}
@@ -40,7 +37,7 @@ def problem_eval(problem_text):
 
 def solution_eval(problem_text, solution_text):
     model = "gpt-4"
-    system = "You are an unbiased expert on Circular Economy, helping a VC analyst sift through ideas with a discerning eye. Adopt a skeptical mindset when analyzing the idea. Here's your knowledge: \n\n" # + circular_economy_knowledge
+    system = "You are an unbiased expert on Circular Economy, helping a VC analyst sift through ideas with a discerning eye. Adopt a skeptical mindset when analyzing the idea. Here's your knowledge: \n\n" + circular_economy_knowledge
     user = f"""Here are a list of questions you must answer about the below problem - solution pair. Please answer each in 3 sentences in JSON format with the question label as the key, with the evaluation as the value.
               Questions:
               {solution_questions}
