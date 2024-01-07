@@ -27,8 +27,12 @@ def update_responses(unique_query_name):
     ps.close()
 
     # Get Gen AI Responses
-    # eval_problem, eval_solution, eval_summary = get_problem_solution_eval_result(
-    #     "problem.txt", "solution.txt")
+    eval_problem, eval_solution, eval_summary = get_problem_solution_eval_result(
+        "./problem.txt", "./solution.txt") # TODO: should take API key as a param
+
+    st.session_state.dataframe[unique_query_name]["eval_problem"]  = eval_problem
+    st.session_state.dataframe[unique_query_name]["eval_solution"] = eval_solution
+    st.session_state.dataframe[unique_query_name]["eval_summary"]  = eval_summary
 
     # TODO: delete these temp files later
 
@@ -77,21 +81,23 @@ def update_screen(screen, results):
             <div class="container">
                 <div class="box">
                     <h4>Problem Evaluation</h4>""" + "".join([
-                    "<h6>" + h_t[0] + "</h6>" + "<p><i>" + h_t[1] + "</i></p>" 
+                    "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
+                    "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
                     for h_t in results["eval_problem"]]
                     if len(results["eval_problem"]) > 0
                     else ["<p><i>Loading...</i></p>"]) + """
                 </div>
                 <div class="box">
                     <h4>Solution Evaluation</h4>""" + "".join([
-                    "<h6>" + h_t[0] + "</h6>" + "<p><i>" + h_t[1] + "</i></p>" 
+                    "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
+                    "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
                     for h_t in results["eval_solution"]]
                     if len(results["eval_solution"]) > 0
                     else ["<p><i>Loading...</i></p>"]) + """
                 </div>
                 <div class="box">
                     <h4>Summary</h4>""" + "".join([
-                    "<h6>" + h_t[0] + "</h6>" + "<p><i>" + h_t[1] + "</i></p>" 
+                    "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
                     for h_t in results["eval_summary"]]
                     if len(results["eval_summary"]) > 0
                     else ["<p><i>Loading...</i></p>"]) + """
