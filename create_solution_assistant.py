@@ -13,6 +13,7 @@ def create_solution_evaluation_assistant(solution_file_path):
 
     assistant_prompt_instruction = """You a VC analyst specializing in sustainability investing.
     You need to evaluate the solution to a problem given in the file.
+    You need to search the internet to evaluate it.
     You need to see if the solution adheres to the following principles of circular economy: 
         1. Design Out Waste and Pollution
             1.1 Focus on designing products that minimize waste and pollution from the outset.
@@ -68,8 +69,6 @@ def get_solution_prompt_answers(solution_file_path):
     "Has this problem been solved elsewhere?"
     ]
 
-    thread_id = utils.get_eval_answers(prompt_list, assistant, client, tavily_client)
-
-    prompt_answer_dict_list = utils.get_messages_from_thread(thread_id, client)
+    prompt_answer_dict_list = utils.get_eval_answers(prompt_list, assistant, client, tavily_client)
 
     return prompt_answer_dict_list
