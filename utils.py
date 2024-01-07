@@ -49,12 +49,12 @@ def get_messages_from_thread(thread_id, client):
         
     for idx, pair in enumerate(user_answer_tuple_list):
         if idx % 2 == 0:
-            prompt_answer_dict = {}
+            # prompt_answer_dict = {}
             next = user_answer_tuple_list[idx + 1]
-            prompt_answer_dict[pair[0]] = pair[1]
-            prompt_answer_dict[next[0]] = next[1]
+            # prompt_answer_dict[pair[0]] = pair[1]
+            # prompt_answer_dict[next[0]] = next[1]
 
-            prompt_answer_dict_list.append(prompt_answer_dict)
+            prompt_answer_dict_list.append((next[1], pair[1]))
 
     return prompt_answer_dict_list
 

@@ -26,7 +26,7 @@ def create_summarization_assistant():
 def get_summarization(problem_sol_prompt_answer_dict_list):
     assistant, client, tavily_client = create_summarization_assistant()
 
-    prompt_list = [f"Question: {d['user']}; Answer: {d['assistant']}" for d in problem_sol_prompt_answer_dict_list]
+    prompt_list = [f"Question: {d[0]}; Answer: {d[1]}" for d in problem_sol_prompt_answer_dict_list]
 
     prompt_answer_dict_list = utils.get_eval_answers(prompt_list, assistant, client, tavily_client)
 

@@ -14,6 +14,7 @@ def create_problem_evaluation_assistant(problem_file_path):
     assistant_prompt_instruction = """You a VC analyst specializing in sustainability investing.
     You need to evaluate the problem given in the file.
     You need to search the web whenever the document doesn't have enough information.
+    You need to give answers in 1 or maximum 2 sentences.
     """
     file = client.files.create(
         file=open(
@@ -28,6 +29,7 @@ def create_problem_evaluation_assistant(problem_file_path):
         instructions=assistant_prompt_instruction,
         model="gpt-4-1106-preview",
         tools=[{"type": "retrieval"},
+               {"type": "code_interpreter"},
             {
             "type": "function",
             "function": {
