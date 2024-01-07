@@ -17,12 +17,12 @@ def update_responses(unique_query_name):
     #     return # TODO: fix
 
     # Create temp problem file
-    p = open("problem.txt", "w")
+    p = open("problem.txt", "wb")
     p.write(st.session_state.dataframe[unique_query_name]['problem'] + "\n")
     p.close()
 
     # Create temp problem file
-    ps = open("solution.txt", "w")
+    ps = open("solution.txt", "wb")
     ps.write("Problem: " + st.session_state.dataframe[unique_query_name]['problem'] + "\n\n")
     ps.write("Solution: " + st.session_state.dataframe[unique_query_name]['solution'] + "\n")
     ps.close()
