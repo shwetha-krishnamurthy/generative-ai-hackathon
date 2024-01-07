@@ -1,12 +1,11 @@
 import nltk 
-import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer 
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 
 def keywords(text):
-    text = text.lower().replace(".", "") 
+    text = text.lower().replace(".", "")
 
     # Tokenize the text into words 
     tokens = nltk.word_tokenize(text)
@@ -25,11 +24,10 @@ def keywords(text):
     except:
         top_nouns = text.split()[:5]
 
-    # Print the top 5 keywords 
     return " ".join(top_nouns).capitalize()
 
 def process_dataframe(dataframe):
-    # TODO We select first 200 rows to avoid overloading the MVP, flag to user which rows to select
+    # TODO We select first 200 rows to avoid overloading the MVP, in the future we might ask user which rows to select
     subset_df = dataframe.head(200)
     if 'problem' in subset_df.columns and 'solution' in subset_df.columns:        
         subset_df['problem'] = subset_df['problem'].str.strip() 
@@ -37,7 +35,10 @@ def process_dataframe(dataframe):
         
         # Merge the problem and solution and apply the keywords() function on each
         subset_df['merged_text'] = subset_df['problem'].astype(str) + " " + subset_df['solution'].astype(str)
-        subset_df['keywords'] = subset_df['merged_text'].apply(keywords) # TODO: check that keywords are unique, if not add (1), (2), etc.
+        subset_df['keywords'] = subset_df['merged_text'].apply(keywords)
+        subset_df['count'] = subset_df.groupby('keywords').cumcount()
+        subset_df['keywords'] = subset_df.apply(lambda x: x['keywords'] if x['count'] == 0 else f"{x['keywords']}({x['count']})", axis=1)
+        subset_df.drop('count', axis=1, inplace=True)
 
         result_dict = {}
         for _ , row in subset_df.iterrows():
@@ -46,8 +47,8 @@ def process_dataframe(dataframe):
                 'problem': row['problem'], 
                 'solution': row['solution'], 
                 'eval_problem': [], 
-                "eval_solution": [], 
-                "eval_summary": []}
+                'eval_solution': [], 
+                'eval_summary': []}
         return result_dict
     else:
         raise ValueError("The dataframe does not have the required 'problem' and 'solution' columns.")
