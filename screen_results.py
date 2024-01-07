@@ -63,12 +63,16 @@ def update_screen(screen, results):
                 <div class="box">
                     <h4>Solution Evaluation</h4>""" + "".join([
                     "<h6>" + h_t[0] + "</h6>" + "<p><i>" + h_t[1] + "</i></p>" 
-                    for h_t in results["eval_solution"]]) + """
+                    for h_t in results["eval_solution"]]
+                    if len(results["eval_solution"]) > 0
+                    else ["<p><i>Loading...</i></p>"]) + """
                 </div>
                 <div class="box">
                     <h4>Summary</h4>""" + "".join([
                     "<h6>" + h_t[0] + "</h6>" + "<p><i>" + h_t[1] + "</i></p>" 
-                    for h_t in results["eval_summary"]]) + """
+                    for h_t in results["eval_summary"]]
+                    if len(results["eval_summary"]) > 0
+                    else ["<p><i>Loading...</i></p>"]) + """
                 </div>
             </div>
         </div>
@@ -101,12 +105,12 @@ def show_results_screen(data):
     # Side Bar (only appears if run with multiple queries)
     unique_query_name = list(data.keys())[0]
     if (len(data.keys()) > 1):
-        unique_query_name = st.sidebar.radio("Queries", data.keys()) # TODO: consider capping queries at 100
+        unique_query_name = st.sidebar.radio("Queries", data.keys())
     main_content = st
 
     # Main Screen
     main_content.title("VC Evaluator (by sustAInable): " + unique_query_name)
-    data = update_responses(data, unique_query_name) # TODO: not certain if need data = at beginning, depends if dictionaries have deep copy
+    data = update_responses(data, unique_query_name)
     update_screen(main_content, data[unique_query_name])
 
     # Disclaimer (TODO: should customize disclaimer)

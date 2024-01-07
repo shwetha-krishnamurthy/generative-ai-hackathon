@@ -20,10 +20,7 @@ if st.session_state.page == 0:
 
 # Show results
 if st.session_state.page == 1:
-    print("******** DF:")
-    print(st.session_state.dataframe)
-    data = process_dataframe(st.session_state.dataframe)
-    # del st.session_state.dataframe
+    data = process_dataframe(st.session_state.dataframe) # TODO: this is being run every time the session reloads
     show_results_screen(data)
 
 # Format user input

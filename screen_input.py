@@ -47,7 +47,7 @@ def show_input_screen():
                 stringio = StringIO(uploaded_file.getvalue().decode("utf-8", errors="replace"))
                 string_data = stringio.read()
                 st.session_state.dataframe = pd.read_csv(StringIO(string_data))
-                st.write(st.session_state.dataframe.head())
+                # TODO: maybe view input to justify processing results
                 st.success("CSV file successfully loaded.")
             except Exception as e:
                 st.write("An error occurred while reading the CSV file.")
@@ -55,8 +55,8 @@ def show_input_screen():
 
         elif content_source == "Manual entry":
             st.session_state.dataframe = pd.DataFrame({
-                'Problem': [problem_statement],
-                'Solution': [solution_statement]
+                'problem': [problem_statement],
+                'solution': [solution_statement]
             })
         
         # Move to next page
