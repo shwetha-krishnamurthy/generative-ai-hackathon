@@ -24,7 +24,7 @@ def show_input_screen():
     
     content_source = st.radio("Choose input method:", ["CSV upload", "Manual entry"])
 
-    with st.form(key='user_input_form'):
+    with st.form(key = 'user_input_form', clear_on_submit = False):
         # CSV Upload
         if content_source == "CSV upload":
             uploaded_file = st.file_uploader("Upload CSV File", type=["csv"])
@@ -35,25 +35,27 @@ def show_input_screen():
             solution_statement = st.text_input("Enter the Solution")
 
         # API Key
-        st.session_state.api_key = st.text_input("Enter OpenAI API Key: *Required", type='password')
-        st.session_state.tavily_key = st.text_input("Enter Tavily API Key *Optional (if you would like to use the new Open AI Assistants; please note that this new technology is experimental and may require more tokens):", type='password')
+        st.session_state.api_key = st.text_input("Enter OpenAI API Key (required):", type='password')
+        st.session_state.tavily_key = st.text_input("Enter Tavily API Key (if you would like to use the new Open AI Assistants; please note that this new technology is experimental and may require more tokens):", type='password')
 
         os.environ['OPENAI_API_KEY'] = st.session_state.api_key
         os.environ["TAVILY_API_KEY"] = st.session_state.tavily_key
 
         # Submission button
-        submitted = st.form_submit_button('Submit')
+        submitted = st.form_submit_button('Upload')
         
     # Store inputs
-    if submitted:
+    if submitted and (st.session_state.api_key is None or st.session_state.api_key == ""):
+        st.error("Please include an OpenAI API Key.")
+
+    elif submitted:
         if content_source == "CSV upload" and uploaded_file is not None:
             try:
                 stringio = StringIO(uploaded_file.getvalue().decode("utf-8", errors="replace"))
                 string_data = stringio.read()
                 st.session_state.dataframe = process_dataframe(pd.read_csv(StringIO(string_data)))
                 
-                st.success('CSV file successfully loaded!')
-                st.warning('Please click "Process Results", which take a few moments to process. Please do not leave or click elsewhere on this screen while it is loading.')
+                st.warning('CSV file successfully loaded! Please click "Process Results", which take a few moments to process. Please do not leave or click elsewhere on this screen while it is loading.')
 
                 # Move to next page
                 st.button('Process Results', on_click = nextpage)    

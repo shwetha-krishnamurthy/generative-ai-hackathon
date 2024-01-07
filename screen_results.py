@@ -7,10 +7,11 @@ import pandas as pd
 # Helper Functions
 ###############################################################################
 
-# TODO: there are a lot of print statements everywhere, we should remove (as well as resolve warnings)
-
 # Changes session state back to input page
-def backpage(): st.session_state.page = 0
+def backpage(): 
+    st.session_state.page       = 0
+    st.session_state.api_key    = None
+    st.session_state.tavily_key = None
 
 # Adds this idea to a short list of ideas that the VC can export
 def add_to_shortlist(unique_query_name):
@@ -48,7 +49,7 @@ def add_to_shortlist(unique_query_name):
 
 @st.cache_data
 def convert_df(df):
-    return df.to_csv().encode('utf-8')
+    return df.to_csv(index = False).encode('utf-8')
 
 # If the Gen AI results have not been calculated yet for a given problem-solution
 # pair, then calculate the results.
@@ -83,8 +84,18 @@ def update_responses(unique_query_name):
             eval_summary  = [('SWOT Analysis', eval_summary_dict['SWOT Analysis']), 
                             ('Recommendation', eval_summary_dict['Recommendation'])]
 
+            st.session_state.dataframe[unique_query_name]["eval_problem"]  = eval_problem
+            st.session_state.dataframe[unique_query_name]["eval_solution"] = eval_solution
+            st.session_state.dataframe[unique_query_name]["eval_summary"]  = eval_summary
+
+        except Exception as e:
+            st.button('Restart Session with New Data and Key', on_click = backpage)
+            if "AuthenticationError" in str(e) or "Incorrect API key provided" in str(e):
+                st.error("The provided Open AI key is not valid. Please restart the session with a valid Open AI key.")
+            st.error(e)
+
         except:
-            st.warning("Sorry, we're having difficulty connecting to Open AI right now. Please try this query again in a few moments. You can click on any other query in the meantime!")
+                st.warning("Sorry, we're having difficulty connecting to Open AI right now. Please try this query again in a few moments. You can click on any other query in the meantime!")
 
     else:
         try:
@@ -92,26 +103,38 @@ def update_responses(unique_query_name):
             st.session_state.show_solution_keys[unique_query_name] = False
             eval_problem, eval_solution, eval_summary = get_problem_solution_eval_result(
                 "./problem.txt", "./solution.txt")
-            st.toast("Calculated using the new Open AI Assistants (experimental)!")
-            
-        except Exception as e:
-            # Backup Chat completion GenAI
-            st.session_state.show_solution_keys[unique_query_name] = True
-            eval_problem_dict, eval_solution_dict, eval_summary_dict = backup_chat_completions.get_problem_solution_eval_result(
-                st.session_state.dataframe[unique_query_name]['problem'],
-                st.session_state.dataframe[unique_query_name]['solution'])
 
-            eval_problem  = [(k, eval_problem_dict[k])  for k in sorted(list(eval_problem_dict.keys() ))]
-            eval_solution = [(k, eval_solution_dict[k]) for k in sorted(list(eval_solution_dict.keys()))]
-            eval_summary  = [('SWOT Analysis', eval_summary_dict['SWOT Analysis']), 
-                            ('Recommendation', eval_summary_dict['Recommendation'])]
+            st.session_state.dataframe[unique_query_name]["eval_problem"]  = eval_problem
+            st.session_state.dataframe[unique_query_name]["eval_solution"] = eval_solution
+            st.session_state.dataframe[unique_query_name]["eval_summary"]  = eval_summary
+
+            st.toast("Calculated using the new Open AI Assistants (experimental)!")
+
+        except Exception as e:
+            try:
+                # Backup Chat completion GenAI
+                st.session_state.show_solution_keys[unique_query_name] = True
+                eval_problem_dict, eval_solution_dict, eval_summary_dict = backup_chat_completions.get_problem_solution_eval_result(
+                    st.session_state.dataframe[unique_query_name]['problem'],
+                    st.session_state.dataframe[unique_query_name]['solution'])
+
+                eval_problem  = [(k, eval_problem_dict[k])  for k in sorted(list(eval_problem_dict.keys() ))]
+                eval_solution = [(k, eval_solution_dict[k]) for k in sorted(list(eval_solution_dict.keys()))]
+                eval_summary  = [('SWOT Analysis', eval_summary_dict['SWOT Analysis']), 
+                                ('Recommendation', eval_summary_dict['Recommendation'])]
+
+                st.session_state.dataframe[unique_query_name]["eval_problem"]  = eval_problem
+                st.session_state.dataframe[unique_query_name]["eval_solution"] = eval_solution
+                st.session_state.dataframe[unique_query_name]["eval_summary"]  = eval_summary
+
+            except Exception as e:
+                st.button('Restart Session with New Data and Keys', on_click = backpage)
+                if "AuthenticationError" in str(e) or "Incorrect API key provided" in str(e):
+                    st.error("Either the provided Open AI or Tavily key is not valid. Please restart the session with valid Open AI and Tavily keys.")
+                st.error(e)
 
         except:
             st.warning("Sorry, we're having difficulty connecting to Open AI right now. Please try this query again in a few moments. You can click on any other query in the meantime!")
-
-    st.session_state.dataframe[unique_query_name]["eval_problem"]  = eval_problem
-    st.session_state.dataframe[unique_query_name]["eval_solution"] = eval_solution
-    st.session_state.dataframe[unique_query_name]["eval_summary"]  = eval_summary
 
 # Prints HTML code for the results screen 
 def update_screen(screen, results, show_keys):
@@ -205,21 +228,24 @@ def show_results_screen():
     with st.spinner('Loading ...'):
         update_responses(unique_query_name)
 
-    # Action buttons
-    col1, col2, col3 = main_content.columns(3)
-    with col1:
-        st.button('Upload New Data', on_click = backpage)
-    with col2:
-        if st.button('Add to Shortlist'):
-            add_to_shortlist(unique_query_name)
-    with col3:
-        csv = convert_df(st.session_state.shortlist)
-        st.download_button('Download Shortlist', data = csv, file_name = "Shortlist.csv",
-                           mime = 'text/csv')
+    # Unless there was an error updating the responses...
+    if len(st.session_state.dataframe[unique_query_name]["eval_problem"]) > 0:
 
-    # Main Screen
-    update_screen(main_content, st.session_state.dataframe[unique_query_name],
-                  st.session_state.show_solution_keys[unique_query_name])
+        # Action buttons
+        col1, col2, col3 = main_content.columns(3)
+        with col1:
+            st.button('Restart Session with New Data', on_click = backpage)
+        with col2:
+            if st.button('Add to Shortlist'):
+                add_to_shortlist(unique_query_name)
+        with col3:
+            csv = convert_df(st.session_state.shortlist)
+            st.download_button('Download Shortlist', data = csv, file_name = "Shortlist.csv",
+                            mime = 'text/csv')
+
+        # Main Screen
+        update_screen(main_content, st.session_state.dataframe[unique_query_name],
+                    st.session_state.show_solution_keys[unique_query_name])
 
     # Disclaimer
     main_content.markdown("*Disclaimer: Generative AI can make mistakes. Consider checking important information.*")
