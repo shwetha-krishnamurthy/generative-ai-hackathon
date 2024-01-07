@@ -1,7 +1,6 @@
 import streamlit as st
 from problem_solution_eval import get_problem_solution_eval_result
 import backup_chat_completions
-import os
 import pandas as pd
 
 ###############################################################################
@@ -15,45 +14,40 @@ def backpage(): st.session_state.page = 0
 
 # Adds this idea to a short list of ideas that the VC can export
 def add_to_shortlist(unique_query_name):
-    with st.spinner('Saving ...'):
-        # If its already in the output, then don't add it again
-        if st.session_state.dataframe["shortlist"]
-            st.warning('Already in shortlist.')
-            return
+    # If its already in the output, then don't add it again
+    if st.session_state.dataframe[unique_query_name]["shortlist"]:
+        st.toast("Already in shortlist!")
+        return
 
-        # Otherwise, add it
-        results = st.session_state.dataframe[unique_query_name]
-        st.session_state.dataframe["shortlist"] = True
-        
-        eval_prob_text = "".join([h_t[0].replace('\n', ' ') + "\n" + 
-                                h_t[1].replace('\n', ' ')
-                                for h_t in results["eval_problem"]])
-        
-        eval_soln_text = "".join([h_t[0].replace('\n', ' ') + "\n" + 
-                                h_t[1].replace('\n', ' ')
-                                for h_t in results["eval_solution"]])
-        
-        eval_summ_text = "".join([h_t[0].replace('\n', ' ') + "\n" + 
-                                h_t[1].replace('\n', ' ')
-                                for h_t in results["eval_summary"]])
-        if unique_query_name in st.session_state.show_solution_keys.keys():
-            if not st.session_state.show_solution_keys[unique_query_name]:        
-                eval_summ_text = "".join([h_t[1].replace('\n', ' ')
-                                        for h_t in results["eval_summary"]])
+    # Otherwise, add it
+    results = st.session_state.dataframe[unique_query_name]
+    st.session_state.dataframe[unique_query_name]["shortlist"] = True
+    
+    eval_prob_text = "".join([h_t[0].replace('\n', ' ') + "\n" + 
+                            h_t[1].replace('\n', ' ') + "\n"
+                            for h_t in results["eval_problem"]])
+    eval_soln_text = "".join([h_t[0].replace('\n', ' ') + "\n" + 
+                            h_t[1].replace('\n', ' ') + "\n"
+                            for h_t in results["eval_solution"]])
+    eval_summ_text = "".join([h_t[0].replace('\n', ' ') + "\n" + 
+                            h_t[1].replace('\n', ' ') + "\n"
+                            for h_t in results["eval_summary"]])
+    if unique_query_name in st.session_state.show_solution_keys.keys():
+        if not st.session_state.show_solution_keys[unique_query_name]:        
+            eval_summ_text = "".join([h_t[1].replace('\n', ' ')
+                                    for h_t in results["eval_summary"]])
 
-        new_row = pd.DataFrame({
-            "Problem": [results["problem"].replace('\n', ' ')], 
-            "Solution": [results["solution"].replace('\n', ' ')], 
-            "Problem Evaluation": [eval_prob_text],
-            "Solution Evaluation": [eval_soln_text],
-            "Summary": [eval_summ_text]})
+    new_row = pd.DataFrame({
+        "Problem": [results["problem"].replace('\n', ' ')], 
+        "Solution": [results["solution"].replace('\n', ' ')], 
+        "Problem Evaluation": [eval_prob_text],
+        "Solution Evaluation": [eval_soln_text],
+        "Summary": [eval_summ_text]})
 
-        st.session_state.shortlist = pd.concat([st.session_state.shortlist, new_row], axis = 0) # TODO: check to make sure updates in place
-        st.success('Added to shortlist!')
+    st.session_state.shortlist = pd.concat([st.session_state.shortlist, new_row], axis = 0)
 
 @st.cache_data
 def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
 
 # If the Gen AI results have not been calculated yet for a given problem-solution
@@ -76,34 +70,51 @@ def update_responses(unique_query_name):
     ps.write(ps_t.encode('utf-8'))
     ps.close()
 
-    # try: # TODO: uncomment
-    #     # Get Gen AI Responses
-    #     st.session_state.show_solution_keys[unique_query_name] = False
-    #     eval_problem, eval_solution, eval_summary = get_problem_solution_eval_result(
-    #         "./problem.txt", "./solution.txt") # TODO: should take API key as a param
-        
-    # except Exception as e:
-    # Backup Chat completion GenAI
-    st.session_state.show_solution_keys[unique_query_name] = True
-    eval_problem_dict, eval_solution_dict, eval_summary_dict = backup_chat_completions.get_problem_solution_eval_result(
-        st.session_state.dataframe[unique_query_name]['problem'],
-        st.session_state.dataframe[unique_query_name]['solution'])
+    if (st.session_state.tavily_key is None) or (st.session_state.tavily_key == ""):
+        try:
+            # Backup Chat completion GenAI
+            st.session_state.show_solution_keys[unique_query_name] = True
+            eval_problem_dict, eval_solution_dict, eval_summary_dict = backup_chat_completions.get_problem_solution_eval_result(
+                st.session_state.dataframe[unique_query_name]['problem'],
+                st.session_state.dataframe[unique_query_name]['solution'])
 
-    eval_problem  = [(k, eval_problem_dict[k])  for k in sorted(list(eval_problem_dict.keys() ))]
-    eval_solution = [(k, eval_solution_dict[k]) for k in sorted(list(eval_solution_dict.keys()))]
-    eval_summary  = [(k, eval_summary_dict[k])  for k in sorted(list(eval_summary_dict.keys() ))]
-    # TODO: reindent above this (and uncomment except)
+            eval_problem  = [(k, eval_problem_dict[k])  for k in sorted(list(eval_problem_dict.keys() ))]
+            eval_solution = [(k, eval_solution_dict[k]) for k in sorted(list(eval_solution_dict.keys()))]
+            eval_summary  = [('SWOT Analysis', eval_summary_dict['SWOT Analysis']), 
+                            ('Recommendation', eval_summary_dict['Recommendation'])]
+
+        except:
+            st.warning("Sorry, we're having difficulty connecting to Open AI right now. Please try this query again in a few moments. You can click on any other query in the meantime!")
+
+    else:
+        try:
+            # Get Gen AI Responses
+            st.session_state.show_solution_keys[unique_query_name] = False
+            eval_problem, eval_solution, eval_summary = get_problem_solution_eval_result(
+                "./problem.txt", "./solution.txt")
+            st.toast("Calculated using the new Open AI Assistants (experimental)!")
+            
+        except Exception as e:
+            # Backup Chat completion GenAI
+            st.session_state.show_solution_keys[unique_query_name] = True
+            eval_problem_dict, eval_solution_dict, eval_summary_dict = backup_chat_completions.get_problem_solution_eval_result(
+                st.session_state.dataframe[unique_query_name]['problem'],
+                st.session_state.dataframe[unique_query_name]['solution'])
+
+            eval_problem  = [(k, eval_problem_dict[k])  for k in sorted(list(eval_problem_dict.keys() ))]
+            eval_solution = [(k, eval_solution_dict[k]) for k in sorted(list(eval_solution_dict.keys()))]
+            eval_summary  = [('SWOT Analysis', eval_summary_dict['SWOT Analysis']), 
+                            ('Recommendation', eval_summary_dict['Recommendation'])]
+
+        except:
+            st.warning("Sorry, we're having difficulty connecting to Open AI right now. Please try this query again in a few moments. You can click on any other query in the meantime!")
 
     st.session_state.dataframe[unique_query_name]["eval_problem"]  = eval_problem
     st.session_state.dataframe[unique_query_name]["eval_solution"] = eval_solution
-    st.session_state.dataframe[unique_query_name]["eval_summary"]  = eval_solution # TODO: change to eval_summary
-
-    # Delete temp file
-    os.remove("problem.txt") # TODO: doesn't seem to be working
-    os.remove("solution.txt")
+    st.session_state.dataframe[unique_query_name]["eval_summary"]  = eval_summary
 
 # Prints HTML code for the results screen 
-def update_screen(screen, results):
+def update_screen(screen, results, show_keys):
     html_code = """
     <!DOCTYPE html>
     <html lang="en">
@@ -151,21 +162,21 @@ def update_screen(screen, results):
                     else ["<p><i>Loading...</i></p>"]) + """
                 </div>
                 <div class="box">
+                    <h4>Summary</h4>""" + "".join([
+                    "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
+                    "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
+                    if show_keys
+                    else "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>"
+                    for h_t in results["eval_summary"]]
+                    if len(results["eval_summary"]) > 0
+                    else ["<p><i>Loading...</i></p>"]) + """
+                </div>
+                <div class="box">
                     <h4>Solution Evaluation</h4>""" + "".join([
                     "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
                     "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
                     for h_t in results["eval_solution"]]
                     if len(results["eval_solution"]) > 0
-                    else ["<p><i>Loading...</i></p>"]) + """
-                </div>
-                <div class="box">
-                    <h4>Summary</h4>""" + "".join([
-                    "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
-                    "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
-                    if st.session_state.show_solution_keys[unique_query_name]
-                    else "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>"
-                    for h_t in results["eval_summary"]]
-                    if len(results["eval_summary"]) > 0
                     else ["<p><i>Loading...</i></p>"]) + """
                 </div>
             </div>
@@ -186,29 +197,29 @@ def show_results_screen():
     # Side Bar (only appears if run with multiple queries)
     unique_query_name = list(st.session_state.dataframe.keys())[0]
     if (len(st.session_state.dataframe.keys()) > 1):
-        unique_query_name = st.sidebar.radio("Queries", st.session_state.dataframe.keys())
+        unique_query_name = st.sidebar.radio("Idea Label", st.session_state.dataframe.keys())
     main_content = st
 
     # Title
-    main_content.title("VC Evaluator (by sustAInable): " + unique_query_name)
-    # with st.spinner('Loading ...'):
-    #     update_responses(unique_query_name) # TODO: uncomment
+    main_content.title("SustainAIble VC Synergy")
+    with st.spinner('Loading ...'):
+        update_responses(unique_query_name)
 
     # Action buttons
-    col1, col2, col3, col4, col5, col6 = main_content.columns(6)
+    col1, col2, col3 = main_content.columns(3)
     with col1:
         st.button('Upload New Data', on_click = backpage)
     with col2:
+        if st.button('Add to Shortlist'):
+            add_to_shortlist(unique_query_name)
+    with col3:
         csv = convert_df(st.session_state.shortlist)
         st.download_button('Download Shortlist', data = csv, file_name = "Shortlist.csv",
                            mime = 'text/csv')
-    with col3:
-        # TODO: already show if not already in shortlist
-        if st.button('Add to Shortlist'):
-            add_to_shortlist(unique_query_name)
 
     # Main Screen
-    update_screen(main_content, st.session_state.dataframe[unique_query_name])
+    update_screen(main_content, st.session_state.dataframe[unique_query_name],
+                  st.session_state.show_solution_keys[unique_query_name])
 
     # Disclaimer
     main_content.markdown("*Disclaimer: Generative AI can make mistakes. Consider checking important information.*")

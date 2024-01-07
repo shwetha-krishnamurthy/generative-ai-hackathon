@@ -17,6 +17,8 @@ if "show_solution_keys" not in st.session_state:
     st.session_state.show_solution_keys = {}
 if "shortlist" not in st.session_state:
     st.session_state.shortlist = pd.DataFrame()
+if "tavily_key" not in st.session_state:
+    st.session_state.tavily_key = None
 
 # Get user input
 if st.session_state.page == 0:

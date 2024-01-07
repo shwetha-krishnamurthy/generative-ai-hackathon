@@ -50,7 +50,8 @@ def process_dataframe(dataframe):
                 'solution': row['solution'], 
                 'eval_problem': [], 
                 'eval_solution': [], 
-                'eval_summary': []}
+                'eval_summary': [],
+                'shortlist': False}
         return result_dict
     else:
         raise ValueError("The dataframe does not have the required 'problem' and 'solution' columns.")
