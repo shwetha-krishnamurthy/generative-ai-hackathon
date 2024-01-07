@@ -18,13 +18,15 @@ def update_responses(unique_query_name):
 
     # Create temp problem file
     p = open("problem.txt", "wb")
-    p.write(st.session_state.dataframe[unique_query_name]['problem'] + "\n")
+    p_t = st.session_state.dataframe[unique_query_name]['problem'] + "\n"
+    p.write(p_t.encode('utf-8'))
     p.close()
 
     # Create temp problem file
     ps = open("solution.txt", "wb")
-    ps.write("Problem: " + st.session_state.dataframe[unique_query_name]['problem'] + "\n\n")
-    ps.write("Solution: " + st.session_state.dataframe[unique_query_name]['solution'] + "\n")
+    ps_t = ("Problem: " + st.session_state.dataframe[unique_query_name]['problem'] + "\n\n" +
+            "Solution: " + st.session_state.dataframe[unique_query_name]['solution'] + "\n")
+    ps.write(ps_t.encode('utf-8'))
     ps.close()
 
     # Get Gen AI Responses

@@ -48,7 +48,7 @@ def show_input_screen():
                 string_data = stringio.read()
                 st.session_state.dataframe = process_dataframe(pd.read_csv(StringIO(string_data)))
                 # TODO: maybe view input to justify processing results
-                st.success("CSV file successfully loaded.")
+                st.success('CSV file successfully loaded. Please click "Process Results", which take a few moments to process. Please do not leave or click elsewhere on this screen while it is loading.')
 
                 # Move to next page
                 st.button('Process Results', on_click = nextpage)    
