@@ -14,6 +14,6 @@ Team members:
 1. Sign up for Tavily on this link [https://app.tavily.com/](https://app.tavily.com/) and generate the API key.
 2. Clone this repo.
 3. Run the following command to install dependencies:
-   ```\n pip install -r requirements.txt\n```
+```pip install -r requirements.txt```
 4. To start the application, run:
-   ```\n   streamlit run main.py\n   ```
+```streamlit run main.py```
