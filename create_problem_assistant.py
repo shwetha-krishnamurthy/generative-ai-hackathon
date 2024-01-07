@@ -27,8 +27,7 @@ def create_problem_evaluation_assistant(problem_file_path):
     assistant = client.beta.assistants.create(
         instructions=assistant_prompt_instruction,
         model="gpt-4-1106-preview",
-        tools=[{"type": "code_interpreter"},
-            {"type": "retrieval"},
+        tools=[{"type": "retrieval"},
             {
             "type": "function",
             "function": {
@@ -52,10 +51,10 @@ def get_problem_prompt_answers(problem_file_path):
     assistant, client, tavily_client = create_problem_evaluation_assistant(problem_file_path)
 
     prompt_list = [
-    "Does the problem being addressed has any impact on the climate?",
-    "What is the scale of the problem? (people, volume, money, etc)",
-    "Who faces this problem predominantly?",
-    "Who else is solving this problem?",
+    # "Does the problem being addressed has any impact on the climate?",
+    # "What is the scale of the problem? (people, volume, money, etc)",
+    # "Who faces this problem predominantly?",
+    # "Who else is solving this problem?",
     "Has this problem been solved elsewhere?"
     ]
 
