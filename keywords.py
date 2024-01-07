@@ -36,6 +36,8 @@ def process_dataframe(dataframe):
         # Merge the problem and solution and apply the keywords() function on each
         subset_df['merged_text'] = subset_df['problem'].astype(str) + " " + subset_df['solution'].astype(str)
         subset_df['keywords'] = subset_df['merged_text'].apply(keywords)
+        
+        # TODO Check this code - group by keywords, add a cumulative count. If count is 0, add keyword, if not append the count.
         subset_df['count'] = subset_df.groupby('keywords').cumcount()
         subset_df['keywords'] = subset_df.apply(lambda x: x['keywords'] if x['count'] == 0 else f"{x['keywords']}({x['count']})", axis=1)
         subset_df.drop('count', axis=1, inplace=True)
