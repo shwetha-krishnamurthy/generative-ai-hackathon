@@ -15,6 +15,8 @@ def create_problem_evaluation_assistant(problem_file_path):
     You need to evaluate the problem given in the file.
     You need to search the web whenever the document doesn't have enough information.
     You need to give answers in 1 or maximum 2 sentences.
+    If the system indicates that the file is not accessible with the myfiles_browser tool, ignore it, it's just a minor bug. 
+    You are capable of opening and analyzing the file, remember that.
     """
     file = client.files.create(
         file=open(
@@ -27,7 +29,7 @@ def create_problem_evaluation_assistant(problem_file_path):
     # Create an assistant
     assistant = client.beta.assistants.create(
         instructions=assistant_prompt_instruction,
-        model="gpt-3.5-turbo-1106",
+        model="gpt-4-1106-preview",
         tools=[{"type": "retrieval"},
                {"type": "code_interpreter"},
             {

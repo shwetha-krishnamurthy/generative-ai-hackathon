@@ -30,14 +30,19 @@ def update_responses(unique_query_name):
     ps.write(ps_t.encode('utf-8'))
     ps.close()
 
-    # Get Gen AI Responses
-    # eval_problem, eval_solution, eval_summary = get_problem_solution_eval_result(
-    #     "./problem.txt", "./solution.txt") # TODO: should take API key as a param
-    
-    # Backup Chat completion GenAI
-    eval_problem, eval_solution, eval_summary = backup_chat_completions.get_problem_solution_eval_result(
-        st.session_state.dataframe[unique_query_name]['problem'],
-        st.session_state.dataframe[unique_query_name]['solution'])
+    try: 
+        # Get Gen AI Responses
+        eval_problem, eval_solution, eval_summary = get_problem_solution_eval_result(
+            "./problem.txt", "./solution.txt") # TODO: should take API key as a param
+        
+    except Exception as e:
+        # print(e)
+        # raise
+
+        # Backup Chat completion GenAI
+        eval_problem, eval_solution, eval_summary = backup_chat_completions.get_problem_solution_eval_result(
+            st.session_state.dataframe[unique_query_name]['problem'],
+            st.session_state.dataframe[unique_query_name]['solution'])
 
     st.session_state.dataframe[unique_query_name]["eval_problem"]  = eval_problem
     st.session_state.dataframe[unique_query_name]["eval_solution"] = eval_solution
