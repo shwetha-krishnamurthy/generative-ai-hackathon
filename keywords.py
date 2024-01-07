@@ -1,10 +1,15 @@
 import nltk 
+import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer 
+
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 
+
 def keywords(text):
+    # Function to take the top 5 nouns of each problem-solution pair as the idea label
+
     text = text.lower().replace(".", "")
 
     # Tokenize the text into words 
@@ -27,20 +32,25 @@ def keywords(text):
     return " ".join(top_nouns).capitalize()
 
 def process_dataframe(dataframe):
-    # TODO We select first 200 rows to avoid overloading the MVP, in the future we might ask user which rows to select
+    # We select first 200 rows to avoid overloading the MVP, in the future we might ask user which rows to select
     subset_df = dataframe.head(200)
-    if 'problem' in subset_df.columns and 'solution' in subset_df.columns:        
+
+    if 'problem' in subset_df.columns and 'solution' in subset_df.columns:
+        # Suppress only SettingWithCopyWarning
+        pd.options.mode.chained_assignment = None  # default='warn'
+         
         subset_df['problem'] = subset_df['problem'].str.strip() 
         subset_df['solution'] = subset_df['solution'].str.strip()
         
         # Merge the problem and solution and apply the keywords() function on each
         subset_df['merged_text'] = subset_df['problem'].astype(str) + " " + subset_df['solution'].astype(str)
         subset_df['keywords'] = subset_df['merged_text'].apply(keywords)
-        
-        # TODO Check this code - group by keywords, add a cumulative count. If count is 0, add keyword, if not append the count.
         subset_df['count'] = subset_df.groupby('keywords').cumcount()
         subset_df['keywords'] = subset_df.apply(lambda x: x['keywords'] if x['count'] == 0 else f"{x['keywords']}({x['count']})", axis=1)
         subset_df.drop('count', axis=1, inplace=True)
+        
+        # Renable warnings
+        pd.options.mode.chained_assignment = 'warn'
 
         result_dict = {}
         for _ , row in subset_df.iterrows():
