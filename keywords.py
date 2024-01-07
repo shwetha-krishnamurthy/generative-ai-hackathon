@@ -39,8 +39,6 @@ def process_dataframe(dataframe):
         subset_df['merged_text'] = subset_df['problem'].astype(str) + " " + subset_df['solution'].astype(str)
         subset_df['keywords'] = subset_df['merged_text'].apply(keywords) # TODO: check that keywords are unique, if not add (1), (2), etc.
 
-        subset_df.to_csv("temp.csv")
-
         result_dict = {}
         for _ , row in subset_df.iterrows():
         # Use the 'keywords' column value as the key
@@ -50,15 +48,6 @@ def process_dataframe(dataframe):
                 'eval_problem': [], 
                 "eval_solution": [], 
                 "eval_summary": []}
-        example_key = next(iter(result_dict))
-        print(example_key)
-        print(result_dict[example_key])
         return result_dict
     else:
         raise ValueError("The dataframe does not have the required 'problem' and 'solution' columns.")
-    
-if __name__ == "__main__":
-   dataframe = pd.read_csv("/home/myu14/Documents/genAI-sustAInable/generative-ai-hackathon/AI EarthHack Dataset.csv", encoding='ISO-8859-1')
-   dict_data = process_dataframe(dataframe)
-
-#    keywords("The construction industry is indubitably one of the significant contributors to global waste, contributing approximately 1.3 billion tons of waste annually, exerting significant pressure on our landfills and natural resources. Traditional construction methods entail single-use designs that require frequent demolitions, leading to resource depletion and wastage.   	Herein, we propose an innovative approach to mitigate this problem: Modular Construction. This method embraces recycling and reuse, taking a significant stride towards a circular economy.   Modular construction involves utilizing engineered components in a manufacturing facility that are later assembled on-site. These components are designed for easy disassembling, enabling them to be reused in diverse projects, thus significantly reducing waste and conserving resources.  Not only does this method decrease construction waste by up to 90%, but it also decreases construction time by 30-50%, optimizing both environmental and financial efficiency. This reduction in time corresponds to substantial financial savings for businesses. Moreover, the modular approach allows greater flexibility, adapting to changing needs over time.  We believe, by adopting modular construction, the industry can transit from a 'take, make and dispose' model to a more sustainable 'reduce, reuse, and recycle' model, driving the industry towards a more circular and sustainable future. The feasibility of this concept is already being proven in markets around the globe, indicating its potential for scalability and real-world application..")

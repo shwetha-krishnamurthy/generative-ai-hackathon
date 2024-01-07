@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from io import StringIO
-
+from keywords import process_dataframe
 
 ###############################################################################
 # Helper Function
@@ -46,21 +46,23 @@ def show_input_screen():
             try:
                 stringio = StringIO(uploaded_file.getvalue().decode("utf-8", errors="replace"))
                 string_data = stringio.read()
-                st.session_state.dataframe = pd.read_csv(StringIO(string_data))
+                st.session_state.dataframe = process_dataframe(pd.read_csv(StringIO(string_data)))
                 # TODO: maybe view input to justify processing results
                 st.success("CSV file successfully loaded.")
+
+                # Move to next page
+                st.button('Process Results', on_click = nextpage)    
             except Exception as e:
                 st.write("An error occurred while reading the CSV file.")
                 st.error(e)
 
         elif content_source == "Manual entry":
-            st.session_state.dataframe = pd.DataFrame({
+            st.session_state.dataframe = process_dataframe(pd.DataFrame({
                 'problem': [problem_statement],
-                'solution': [solution_statement]
-            })
+                'solution': [solution_statement]}))
         
-        # Move to next page
-        st.button('Process Results', on_click = nextpage)    
+            # Move to next page
+            st.button('Process Results', on_click = nextpage)    
 
 if __name__ == "__main__":
     show_input_screen()
