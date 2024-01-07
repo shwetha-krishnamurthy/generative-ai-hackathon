@@ -13,8 +13,8 @@ def backpage(): st.session_state.page = 0
 # pair, then calculate the results.
 def update_responses(unique_query_name):
     # First check if we've already calculate these before
-    # if not st.session_state.dataframe[unique_query_name]["eval_problem"]:
-    #     return # TODO: fix
+    if len(st.session_state.dataframe[unique_query_name]["eval_problem"]) > 0:
+        return
 
     # Create temp problem file
     p = open("problem.txt", "wb")
