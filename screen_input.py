@@ -18,7 +18,7 @@ def nextpage(): st.session_state.page = 1
 # key unless one was previously provided.
 def show_input_screen():
     # Title
-    st.title("VC Evaluator (by sustAInable)")
+    st.title("SustainAIble VC Synergy")
     st.write("Upload your CSV file of your problem-solution pairs. Alternatively, analyze one idea")
     
     content_source = st.radio("Choose input method:", ["CSV upload", "Manual entry"])
