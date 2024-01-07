@@ -3,35 +3,37 @@ import utils
 from openai import OpenAI
 from tavily import TavilyClient
 
-os.environ['OPENAI_API_KEY'] = "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"
-os.environ["TAVILY_API_KEY"] = "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"
 
 def create_problem_evaluation_assistant(problem_file_path):
     # Initialize clients with API keys
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
     tavily_client = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
 
-    assistant_prompt_instruction = """You a VC analyst specializing in sustainability investing.
+    with open(problem_file_path, 'rb') as f:
+        problem_text = f.read()
+
+    assistant_prompt_instruction = f"""You a VC analyst specializing in sustainability investing.
+    Here is a problem solution pair that you received from a young startup:
+    {problem_text}\n
+    The startup is trying to solve the given problem.
     You need to evaluate the problem given in the file.
+    You need to do some market research and understand if the problem being addressed has any impact on the climate.
     You need to search the web whenever the document doesn't have enough information.
     You need to give answers in 1 or maximum 2 sentences.
-    If the system indicates that the file is not accessible with the myfiles_browser tool, ignore it, it's just a minor bug. 
-    You are capable of opening and analyzing the file, remember that.
     """
-    file = client.files.create(
-        file=open(
-                problem_file_path,
-                "rb",
-            ),
-            purpose="assistants",
-    )
+    # file = client.files.create(
+    #     file=open(
+    #             problem_file_path,
+    #             "rb"
+    #         ),
+    #         purpose="assistants",
+    # )
 
     # Create an assistant
     assistant = client.beta.assistants.create(
         instructions=assistant_prompt_instruction,
         model="gpt-4-1106-preview",
-        tools=[{"type": "retrieval"},
-               {"type": "code_interpreter"},
+        tools=[
             {
             "type": "function",
             "function": {
@@ -46,7 +48,7 @@ def create_problem_evaluation_assistant(problem_file_path):
                 }
             }
         }],
-        file_ids=[file.id],
+        # file_ids=[file.id],
     )
 
     return assistant, client, tavily_client
@@ -56,7 +58,7 @@ def get_problem_prompt_answers(problem_file_path):
 
     prompt_list = [
     # "Does the problem being addressed has any impact on the climate?",
-    # "What is the scale of the problem? (people, volume, money, etc)",
+    "What is the scale of the problem? (people, volume, money, etc)",
     # "Who faces this problem predominantly?",
     # "Who else is solving this problem?",
     "Has this problem been solved elsewhere?"
