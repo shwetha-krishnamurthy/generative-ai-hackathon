@@ -19,7 +19,7 @@ def create_problem_evaluation_assistant(problem_file_path):
     file = client.files.create(
         file=open(
                 problem_file_path,
-                "rb",
+                "r",
             ),
             purpose="assistants",
     )

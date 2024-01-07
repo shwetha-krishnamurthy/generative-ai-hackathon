@@ -30,7 +30,7 @@ def create_solution_evaluation_assistant(solution_file_path):
     file = client.files.create(
         file=open(
                 solution_file_path,
-                "rb",
+                "r",
             ),
             purpose="assistants",
     )
