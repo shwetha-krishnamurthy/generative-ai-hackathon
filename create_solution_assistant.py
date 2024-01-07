@@ -15,6 +15,7 @@ def create_solution_evaluation_assistant(solution_file_path):
     You need to evaluate the solution to a problem given in the file.
     You need to search the internet to evaluate it.
     You can say you need more information if you don't find enough information.
+    You need to answers in 1 or max 2 sentences.
     You need to see if the solution adheres to the following principles of circular economy: 
         1. Design Out Waste and Pollution
             1.1 Focus on designing products that minimize waste and pollution from the outset.
@@ -39,6 +40,7 @@ def create_solution_evaluation_assistant(solution_file_path):
         instructions=assistant_prompt_instruction,
         model="gpt-4-1106-preview",
         tools=[{"type": "retrieval"},
+               {"type": "code_interpreter"},
             {
             "type": "function",
             "function": {
