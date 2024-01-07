@@ -27,8 +27,8 @@ def submit_tool_outputs(thread_id, run_id, tools_to_call, client, tavily_client)
         if function_name == "tavily_search":
             output = tavily_search(query=json.loads(function_args)["query"], tavily_client=tavily_client)
 
-        if output: #Uncomment the condition if it throws an invalid request type error.
-            tool_output_array.append({"tool_call_id": tool_call_id, "output": output})
+        # if output: #Uncomment the condition if it throws an invalid request type error.
+        tool_output_array.append({"tool_call_id": tool_call_id, "output": output})
 
     return client.beta.threads.runs.submit_tool_outputs(
         thread_id=thread_id,
