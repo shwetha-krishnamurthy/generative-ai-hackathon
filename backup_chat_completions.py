@@ -63,13 +63,9 @@ def summary_eval(prob_eval_text, sol_eval_text):
               Questions about the solution statement:
               {solution_questions}
               Here's your knowledge: \n\n" + circular_economy_knowledge"""
-    user = f"""Based on these evaluations, please generate an overall SWOT analysis. Then, recommend shortlisting this idea or not with 2 sentence reasoning. Output as a JSON file with the key: SWOT analysis and recommendation.
+    user = """Based on these evaluations, please generate an overall SWOT analysis and whether to shortlist this idea or not. Output in JSON in this format:{SWOT Analysis: 8-sentence-string with new lines between each item, Recommendation: 2-sentence-string} do not nest the JSON output. 
 
-              Problem evaluations:
-              {prob_eval_text}
-
-              Solution evaluations:
-              {sol_eval_text}"""
+              Problem evaluations:""" + prob_eval_text + "Solution evaluations: " + sol_eval_text
     max_tokens = 1200
     temp = 1
     response = run_open_ai(model, system, user, max_tokens, 1, None, temp)
