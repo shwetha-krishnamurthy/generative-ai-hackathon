@@ -76,8 +76,4 @@ def get_problem_solution_eval_result(problem_text, solution_text):
     solution_prompt_answers = solution_eval(problem_text, solution_text)
     summary = summary_eval(problem_prompt_answers, solution_prompt_answers)
 
-    print(problem_prompt_answers)
-    print(solution_prompt_answers)
-    print(summary)
-
     return json.loads(problem_prompt_answers), json.loads(solution_prompt_answers), json.loads(summary)
