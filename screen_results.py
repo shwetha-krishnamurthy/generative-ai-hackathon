@@ -1,5 +1,6 @@
 import streamlit as st
 from problem_solution_eval import get_problem_solution_eval_result
+import backup_chat_completions
 import os
 
 ###############################################################################
@@ -13,8 +14,8 @@ def backpage(): st.session_state.page = 0
 # pair, then calculate the results.
 def update_responses(unique_query_name):
     # First check if we've already calculate these before
-    # if not st.session_state.dataframe[unique_query_name]["eval_problem"]:
-    #     return # TODO: fix
+    if len(st.session_state.dataframe[unique_query_name]["eval_problem"]) > 0:
+        return
 
     # Create temp problem file
     p = open("problem.txt", "wb")
@@ -30,8 +31,13 @@ def update_responses(unique_query_name):
     ps.close()
 
     # Get Gen AI Responses
-    eval_problem, eval_solution, eval_summary = get_problem_solution_eval_result(
-        "./problem.txt", "./solution.txt") # TODO: should take API key as a param
+    # eval_problem, eval_solution, eval_summary = get_problem_solution_eval_result(
+    #     "./problem.txt", "./solution.txt") # TODO: should take API key as a param
+    
+    # Backup Chat completion GenAI
+    eval_problem, eval_solution, eval_summary = backup_chat_completions.get_problem_solution_eval_result(
+        st.session_state.dataframe[unique_query_name]['problem'],
+        st.session_state.dataframe[unique_query_name]['solution'])
 
     st.session_state.dataframe[unique_query_name]["eval_problem"]  = eval_problem
     st.session_state.dataframe[unique_query_name]["eval_solution"] = eval_solution
@@ -111,19 +117,6 @@ def update_screen(screen, results):
     """
 
     screen.markdown(html_code, unsafe_allow_html=True)
-    # TODO: still need to get the more information/chat/decision buttons working
-            # <div class="container">
-            #     <div class="box">
-            #         <center>
-            #             <p>Chat [[TODO: make button]]</p>
-            #         </center>
-            #     </div>
-            #     <div class="box">
-            #         <center>
-            #             <p>Decision [[TODO: make button]]</p>
-            #         </center>
-            #     </div>
-            # </div>
 
 ###############################################################################
 # Print Screen with Results
@@ -143,11 +136,10 @@ def show_results_screen():
     update_responses(unique_query_name)
     update_screen(main_content, st.session_state.dataframe[unique_query_name])
 
-    # Disclaimer (TODO: should customize disclaimer)
+    # Disclaimer
     main_content.markdown("*Disclaimer: Generative AI can make mistakes. Consider checking important information.*")
     main_content.markdown("*Created by Team sustAInable (Shwetha Krishnamurthy, Jacob Ryan, and Mason Yu) for the 2024 D^3 EarthAI Hackathon.*")
 
     # Other action buttons
-    st.button('Upload Different CSV or Problem-Solution Pair', on_click = backpage) # TODO: make sure that 
-    # TODO: consider adding an "export" buttom
+    st.button('Upload Different CSV or Problem-Solution Pair', on_click = backpage)
 
