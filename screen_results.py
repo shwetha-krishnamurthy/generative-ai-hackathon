@@ -111,19 +111,6 @@ def update_screen(screen, results):
     """
 
     screen.markdown(html_code, unsafe_allow_html=True)
-    # TODO: still need to get the more information/chat/decision buttons working
-            # <div class="container">
-            #     <div class="box">
-            #         <center>
-            #             <p>Chat [[TODO: make button]]</p>
-            #         </center>
-            #     </div>
-            #     <div class="box">
-            #         <center>
-            #             <p>Decision [[TODO: make button]]</p>
-            #         </center>
-            #     </div>
-            # </div>
 
 ###############################################################################
 # Print Screen with Results
@@ -143,11 +130,10 @@ def show_results_screen():
     update_responses(unique_query_name)
     update_screen(main_content, st.session_state.dataframe[unique_query_name])
 
-    # Disclaimer (TODO: should customize disclaimer)
+    # Disclaimer
     main_content.markdown("*Disclaimer: Generative AI can make mistakes. Consider checking important information.*")
     main_content.markdown("*Created by Team sustAInable (Shwetha Krishnamurthy, Jacob Ryan, and Mason Yu) for the 2024 D^3 EarthAI Hackathon.*")
 
     # Other action buttons
-    st.button('Upload Different CSV or Problem-Solution Pair', on_click = backpage) # TODO: make sure that 
-    # TODO: consider adding an "export" buttom
+    st.button('Upload Different CSV or Problem-Solution Pair', on_click = backpage)
 
