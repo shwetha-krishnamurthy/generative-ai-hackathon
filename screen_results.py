@@ -99,7 +99,7 @@ def update_responses(unique_query_name):
     st.session_state.dataframe[unique_query_name]["eval_summary"]  = eval_solution # TODO: change to eval_summary
 
     # Delete temp file
-    os.remove("problem.txt")
+    os.remove("problem.txt") # TODO: doesn't seem to be working
     os.remove("solution.txt")
 
 # Prints HTML code for the results screen 
