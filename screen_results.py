@@ -1,5 +1,6 @@
 import streamlit as st
 from problem_solution_eval import get_problem_solution_eval_result
+import os
 
 ###############################################################################
 # Helper Functions
@@ -17,13 +18,13 @@ def update_responses(unique_query_name):
 
     # Create temp problem file
     p = open("problem.txt", "w")
-    p.write(st.session_state.dataframe[unique_query_name]['problem'])
+    p.write(st.session_state.dataframe[unique_query_name]['problem'] + "\n")
     p.close()
 
     # Create temp problem file
     ps = open("solution.txt", "w")
     ps.write("Problem: " + st.session_state.dataframe[unique_query_name]['problem'] + "\n\n")
-    ps.write("Solution: " + st.session_state.dataframe[unique_query_name]['solution'])
+    ps.write("Solution: " + st.session_state.dataframe[unique_query_name]['solution'] + "\n")
     ps.close()
 
     # Get Gen AI Responses
@@ -34,10 +35,9 @@ def update_responses(unique_query_name):
     st.session_state.dataframe[unique_query_name]["eval_solution"] = eval_solution
     st.session_state.dataframe[unique_query_name]["eval_summary"]  = eval_summary
 
-    # TODO: delete these temp files later
-
-    # edits this: st.session_state.dataframe 
-    # TODO: this needs to be written (find the history row in data, see if it has gen AI answers yet, and if it does not, then create them)
+    # Delete temp file
+    os.remove("problem.txt")
+    os.remove("solution.txt")
 
 # Prints HTML code for the results screen 
 def update_screen(screen, results):
@@ -74,8 +74,8 @@ def update_screen(screen, results):
         <div class="main-container">
             <div class="container">
                 <div class="box">
-                    <p><b>Problem:</b> """ + results["problem"] + """</p>
-                    <p><b>Solution:</b> """ + results["solution"] + """</p>
+                    <p><b>Problem:</b> """ + results["problem"].replace('\n', ' ') + """</p>
+                    <p><b>Solution:</b> """ + results["solution"].replace('\n', ' ') + """</p>
                 </div>
             </div>
             <div class="container">
