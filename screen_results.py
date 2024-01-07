@@ -1,4 +1,5 @@
 import streamlit as st
+from problem_solution_eval import get_problem_solution_eval_result
 
 ###############################################################################
 # Helper Functions
@@ -10,7 +11,27 @@ def backpage(): st.session_state.page = 0
 # If the Gen AI results have not been calculated yet for a given problem-solution
 # pair, then calculate the results.
 def update_responses(unique_query_name):
-    return
+    # First check if we've already calculate these before
+    # if not st.session_state.dataframe[unique_query_name]["eval_problem"]:
+    #     return # TODO: fix
+
+    # Create temp problem file
+    p = open("problem.txt", "w")
+    p.write(st.session_state.dataframe[unique_query_name]['problem'])
+    p.close()
+
+    # Create temp problem file
+    ps = open("solution.txt", "w")
+    ps.write("Problem: " + st.session_state.dataframe[unique_query_name]['problem'] + "\n\n")
+    ps.write("Solution: " + st.session_state.dataframe[unique_query_name]['solution'])
+    ps.close()
+
+    # Get Gen AI Responses
+    # eval_problem, eval_solution, eval_summary = get_problem_solution_eval_result(
+    #     "problem.txt", "solution.txt")
+
+    # TODO: delete these temp files later
+
     # edits this: st.session_state.dataframe 
     # TODO: this needs to be written (find the history row in data, see if it has gen AI answers yet, and if it does not, then create them)
 
