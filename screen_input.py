@@ -36,7 +36,7 @@ def show_input_screen():
 
         # API Key
         st.session_state.api_key = st.text_input("Enter OpenAI API Key (required):", type='password')
-        st.session_state.tavily_key = st.text_input("Enter Tavily API Key (if you would like to use the new Open AI Assistants; please note that this new technology is experimental and may require more tokens):", type='password')
+        st.session_state.tavily_key = st.text_input("Enter Tavily API Key (optional; if you would like to scrape the web using Open AI Assistants):", type='password')
 
         os.environ['OPENAI_API_KEY'] = st.session_state.api_key
         os.environ["TAVILY_API_KEY"] = st.session_state.tavily_key
