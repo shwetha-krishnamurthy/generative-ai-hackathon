@@ -8,6 +8,9 @@ Team members:
 2. Mason Yu
 3. Shwetha Krishnamurthy
 
+Product Requirements Document: SustAInable_ProductRequirementsDocument.pdf
+Miro Board with Data Flow Overview: GenAI Hackathon Data Flow Overview.pdf
+
 # Detailed Abstract
 
 SustAInable VC Synergy, crafted by Team SustAInable, is an innovative tool designed to transform the venture capital investment landscape in the Circular Economy sector. Developed with insights from actual VC Investment analysts, our tool addresses their key pain points in evaluating early-stage startups and enabling them to focus their valuable energies on addressing sustainability issues rather than due diligence. Our GenAI-driven platform considers environmental impact, scalability, and market potential, offering a comprehensive evaluation. SustAInable VC Synergy presents a summary for each proposal, enabling VCs to make informed and efficient investment decisions. By integrating our tool into their market research process, VCs can confidently identify and invest in ventures that are not only promising but also contribute significantly to a sustainable future. This approach empowers investors to optimize their portfolio for maximum impact and return while fostering the growth of innovative, environmentally conscious solutions
