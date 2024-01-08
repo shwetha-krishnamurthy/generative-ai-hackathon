@@ -8,9 +8,8 @@ Team members:
 2. Mason Yu
 3. Shwetha Krishnamurthy
 
-Product Requirements Document: SustAInable_ProductRequirementsDocument.pdf
-
-Miro Board with Data Flow Overview: GenAI Hackathon Data Flow Overview.pdf
+**Product Requirements Document:** SustAInable_ProductRequirementsDocument.pdf \n
+**Miro Board with Data Flow Overview:** GenAI Hackathon Data Flow Overview.pdf
 
 # Detailed Abstract
 
