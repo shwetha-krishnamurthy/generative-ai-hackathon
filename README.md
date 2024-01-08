@@ -28,3 +28,6 @@ SustAInable VC Synergy, crafted by Team SustAInable, is an innovative tool desig
 ```pip install -r requirements.txt```
 4. To start the application, run:
 ```streamlit run main.py```
+
+
+**Note**: In case you see a "Connection Error" on the screen, wait for a few minutes and run the streamlit file again.
