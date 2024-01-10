@@ -137,78 +137,84 @@ def update_responses(unique_query_name):
             st.warning("Sorry, we're having difficulty connecting to Open AI right now. Please try this query again in a few moments. You can click on any other query in the meantime!")
 
 # Prints HTML code for the results screen 
-def update_screen(screen, results, show_keys):
-    html_code = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            .main-container {
-                display: flex;
-                flex-direction: column;
-                align-items: stretch;
-                width: 100%;
-            }
+def update_screen(screen, results, show_keys, unique_query_name):
+    try:
+        html_code = """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                .main-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: stretch;
+                    width: 100%;
+                }
 
-            .box {
-                flex: 1;
-                background-color: #f1f2f6;
-                padding: 10px;
-                margin-right: 10px;
-            }
+                .box {
+                    flex: 1;
+                    background-color: #f1f2f6;
+                    padding: 10px;
+                    margin-right: 10px;
+                }
 
-            .container {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 10px;
-            }
-        </style>
-        <title>Gray Boxes</title>
-    </head>
-    <body>
-        <div class="main-container">
-            <div class="container">
-                <div class="box">
-                    <p><b>Problem:</b> """ + results["problem"].replace('\n', ' ') + """</p>
-                    <p><b>Solution:</b> """ + results["solution"].replace('\n', ' ') + """</p>
+                .container {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 10px;
+                }
+            </style>
+            <title>Gray Boxes</title>
+        </head>
+        <body>
+            <div class="main-container">
+                <div class="container">
+                    <div class="box">
+                        <p><b>Problem:</b> """ + results["problem"].replace('\n', ' ') + """</p>
+                        <p><b>Solution:</b> """ + results["solution"].replace('\n', ' ') + """</p>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="box">
+                        <h4>Problem Evaluation</h4>""" + "".join([
+                        "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
+                        "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
+                        for h_t in results["eval_problem"]]
+                        if len(results["eval_problem"]) > 0
+                        else ["<p><i>Loading...</i></p>"]) + """
+                    </div>
+                    <div class="box">
+                        <h4>Summary</h4>""" + "".join([
+                        "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
+                        "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
+                        if show_keys
+                        else "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>"
+                        for h_t in results["eval_summary"]]
+                        if len(results["eval_summary"]) > 0
+                        else ["<p><i>Loading...</i></p>"]) + """
+                    </div>
+                    <div class="box">
+                        <h4>Solution Evaluation</h4>""" + "".join([
+                        "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
+                        "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
+                        for h_t in results["eval_solution"]]
+                        if len(results["eval_solution"]) > 0
+                        else ["<p><i>Loading...</i></p>"]) + """
+                    </div>
                 </div>
             </div>
-            <div class="container">
-                <div class="box">
-                    <h4>Problem Evaluation</h4>""" + "".join([
-                    "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
-                    "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
-                    for h_t in results["eval_problem"]]
-                    if len(results["eval_problem"]) > 0
-                    else ["<p><i>Loading...</i></p>"]) + """
-                </div>
-                <div class="box">
-                    <h4>Summary</h4>""" + "".join([
-                    "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
-                    "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
-                    if show_keys
-                    else "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>"
-                    for h_t in results["eval_summary"]]
-                    if len(results["eval_summary"]) > 0
-                    else ["<p><i>Loading...</i></p>"]) + """
-                </div>
-                <div class="box">
-                    <h4>Solution Evaluation</h4>""" + "".join([
-                    "<h6>" + h_t[0].replace('\n', ' ') + "</h6>" + 
-                    "<p><i>" + h_t[1].replace('\n', ' ') + "</i></p>" 
-                    for h_t in results["eval_solution"]]
-                    if len(results["eval_solution"]) > 0
-                    else ["<p><i>Loading...</i></p>"]) + """
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
+        </body>
+        </html>
+        """
 
-    screen.markdown(html_code, unsafe_allow_html=True)
+        screen.markdown(html_code, unsafe_allow_html=True)
+    except:
+        st.warning("Sorry, we're having difficulty connecting to Open AI right now. Please try this query again in a few moments. You can click on any other query in the meantime!")
+        st.session_state.dataframe[unique_query_name]["eval_problem"]  = []
+        st.session_state.dataframe[unique_query_name]["eval_solution"] = []
+        st.session_state.dataframe[unique_query_name]["eval_summary"]  = []
 
 ###############################################################################
 # Print Screen with Results
@@ -224,7 +230,7 @@ def show_results_screen():
     main_content = st
 
     # Title
-    main_content.title("SustainAIble VC Synergy")
+    main_content.title("SustAInable VC Synergy")
     with st.spinner('Loading ...'):
         update_responses(unique_query_name)
 
@@ -245,7 +251,7 @@ def show_results_screen():
 
         # Main Screen
         update_screen(main_content, st.session_state.dataframe[unique_query_name],
-                    st.session_state.show_solution_keys[unique_query_name])
+                      st.session_state.show_solution_keys[unique_query_name], unique_query_name)
 
     # Disclaimer
     main_content.markdown("*Disclaimer: Generative AI can make mistakes. Consider checking important information.*")
